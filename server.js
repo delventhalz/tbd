@@ -14,6 +14,8 @@ const pool = new pg.Pool({
   password: DB_PASSWORD
 });
 
+app.use(express.json());
+
 app.get('/ping', (req, res) => {
   res.sendStatus(204);
 });
@@ -24,6 +26,24 @@ app.get('/songs', (req, res) => {
   pool.query(query)
     .then((result) => {
       res.status(200).send(result.rows);
+    })
+    .catch((error) => {
+      console.error(error);
+      res.sendStatus(500);
+    });
+});
+
+app.post('/songs', (req, res) => {
+  let song = req.body;
+
+  let query = `
+    INSERT INTO "songs" ("rank", "artist", "track", "published")
+    VALUES ('${song.rank}', '${song.artist}', '${song.track}', '${song.published}');
+  `;
+
+  pool.query(query)
+    .then(() => {
+      res.sendStatus(201);
     })
     .catch((error) => {
       console.error(error);
