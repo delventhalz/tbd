@@ -38,10 +38,10 @@ app.post('/songs', (req, res) => {
 
   let query = `
     INSERT INTO "songs" ("rank", "artist", "track", "published")
-    VALUES ('${song.rank}', '${song.artist}', '${song.track}', '${song.published}');
+    VALUES ($1, $2, $3, $4);
   `;
 
-  pool.query(query)
+  pool.query(query, [song.rank, song.artist, song.track, song.published])
     .then(() => {
       res.sendStatus(201);
     })
